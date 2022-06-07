@@ -1,12 +1,12 @@
 package fun.bb1.config.serializer;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import fun.bb1.registry.IRegistry;
-import fun.bb1.registry.SimpleRegistry;
 
 /**
  * 
@@ -25,50 +25,56 @@ import fun.bb1.registry.SimpleRegistry;
  * limitations under the License.
  */
 /**
- * A Registry containing {@link IRegistry}s that contain serializers
+ * An {@link IRegistry} implementation thats used for containing serializers
+ *
+ * @param <T> The serialization type
  * 
  * @author BradBot_1
  */
-public class SerializerRegistry {
+public class SerializerRegistry<T> implements IRegistry<Class<?>, ISerializer<T, ?>> {
+	
+	protected final @NotNull Map<Class<?>, ISerializer<T, ?>> map = new ConcurrentHashMap<Class<?>, ISerializer<T, ?>>();
 	/**
-	 * The storage place for all {@link IRegistry}'s that pertain to configuration storage
+	 * {@inheritDoc}
 	 */
-	private static final Map<Class<?>, IRegistry<Class<?>, ISerializer<?, ?>>> MAP = new HashMap<Class<?>, IRegistry<Class<?>, ISerializer<?, ?>>>();
-	/**
-	 * Forwards to {@link #registerSerializer(ISerializer, boolean)} with force set to false
-	 * 
-	 * @see #registerSerializer(ISerializer, boolean)
-	 */
-	public static final <T> boolean registerSerializer(@NotNull final ISerializer<T, ?> serializer) {
-		return registerSerializer(serializer, false);
+	@Override
+	public @Nullable ISerializer<T, ?> register(@NotNull final Class<?> identifier, @NotNull final ISerializer<T, ?> registree) {
+		this.map.put(identifier, registree);
+		this.onRegister(identifier, registree);
+		return registree;
 	}
 	/**
-	 * Registers the provided {@link ISerializer}
-	 * 
-	 * @param serializer The {@link ISerializer} to register
-	 * @param force If to override any pre-existing entries
-	 * @return If the registration occurred
+	 * {@inheritDoc}
 	 */
-	public static final <T> boolean registerSerializer(@NotNull final ISerializer<T, ?> serializer, boolean force) {
-		final IRegistry<Class<?>, ISerializer<?, ?>> registry = getRegistryFor(serializer.getSerializeType());
-		if (force) registry.unregister(serializer.getObjectType());
-		if (registry.contains(serializer.getObjectType())) return false; // already one registered
-		registry.register(serializer.getObjectType(), serializer);
-		return true;
+	@Override
+	public @Nullable ISerializer<T, ?> unregister(@NotNull final Class<?> identifier) {
+		return this.map.remove(identifier);
 	}
 	/**
-	 * Gets and returns the appropriate {@link IRegistry} for the provided {@link Class}, if none exists one is created
-	 * 
-	 * @param serializeType The {@link Class} of the type you want to serialize too
-	 * @return The appropriate {@link IRegistry}
+	 * {@inheritDoc}
 	 */
-	public static final <T> @NotNull IRegistry<Class<?>, ISerializer<?, ?>> getRegistryFor(@NotNull final Class<T> serializeType) {
-		if (!MAP.containsKey(serializeType)) return MAP.put(serializeType, new SimpleRegistry<Class<?>, ISerializer<?, ?>>());
-		return MAP.get(serializeType);
+	@Override
+	public @Nullable ISerializer<T, ?> get(@NotNull final Class<?> identifier) {
+		ISerializer<T, ?> serializer = this.map.get(identifier);
+		if (serializer != null) return serializer;
+		if (identifier.isArray()) return this.getArraySerializerFor(this.get(identifier.arrayType()));
+		return null;
 	}
 	/**
-	 * To stop instantiation
+	 * {@inheritDoc}
 	 */
-	private SerializerRegistry() { }
+	@Override
+	public boolean contains(@NotNull Class<?> identifier) {
+		return this.map.containsKey(identifier);
+	}
+	/**
+	 * Creates an {@link ISerializer} that works for an array of the type provided
+	 * 
+	 * @apiNote Will return null if not supported
+	 * 
+	 * @param elementSerializer The serializer to make an array serializer for
+	 * @return A valid {@link ISerializer} for the provided elementSerializer array
+	 */
+	protected @Nullable ISerializer<T, ?> getArraySerializerFor(@Nullable final ISerializer<T, ?> elementSerializer) { return null; }
 	
 }
