@@ -62,7 +62,7 @@ public class SerializerRegistryRegistry {
 	 * @return The appropriate {@link IRegistry}
 	 */
 	@SuppressWarnings("unchecked") // this is safe as the registry must be the same type as the serializeType
-	public static final <T> @NotNull SerializerRegistry<T> getRegistryFor(@NotNull final Class<T> serializeType) {
+	public static final <T> @NotNull SerializerRegistry<T> getRegistryFor(@NotNull final Class<? extends T> serializeType) {
 		if (!MAP.containsKey(serializeType)) MAP.put(serializeType, new SerializerRegistry<T>());
 		return (@NotNull SerializerRegistry<T>) MAP.get(serializeType);
 	}

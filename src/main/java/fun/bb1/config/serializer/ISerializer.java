@@ -44,10 +44,10 @@ public interface ISerializer<S, R> {
 	/**
 	 * @return The class that represents how the data will be encapsulated after serialization
 	 */
-	public @NotNull Class<S> getSerializeType();
+	public @NotNull Class<? extends S> getSerializeType();
 	/**
 	 * @return The class that represents how the data is before serialization
 	 */
-	public @NotNull Class<R> getObjectType();
+	public @NotNull Class<? extends R> getObjectType();
 	
 }
