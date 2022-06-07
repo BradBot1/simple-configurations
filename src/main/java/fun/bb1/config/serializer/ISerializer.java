@@ -1,6 +1,7 @@
 package fun.bb1.config.serializer;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * 
@@ -39,14 +40,14 @@ public interface ISerializer<S, R> {
 	 * 
 	 * @param serializedData The data in a serialized form
 	 */
-	public R deserialize(@NotNull final S serializedData);
+	public @Nullable R deserialize(@NotNull final S serializedData);
 	/**
 	 * @return The class that represents how the data will be encapsulated after serialization
 	 */
-	public Class<S> getSerializeType();
+	public @NotNull Class<S> getSerializeType();
 	/**
 	 * @return The class that represents how the data is before serialization
 	 */
-	public Class<R> getObjectType();
+	public @NotNull Class<R> getObjectType();
 	
 }
