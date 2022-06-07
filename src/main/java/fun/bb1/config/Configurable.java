@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import fun.bb1.config.serializer.ISerializer;
 import fun.bb1.config.serializer.SerializerRegistry;
-import fun.bb1.registry.IRegistry;
+import fun.bb1.config.serializer.SerializerRegistryRegistry;
 
 /**
  * 
@@ -51,7 +51,7 @@ public class Configurable implements IAnnotatedConfigurable {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> @Nullable T serializeForConfiguration(Class<T> serializeType, @Nullable final Logger logger) {
-		final IRegistry<Class<?>, ISerializer<?, ?>> registry = SerializerRegistry.getRegistryFor(serializeType);
+		final SerializerRegistry<T> registry = SerializerRegistryRegistry.getRegistryFor(serializeType);
 		final Field[] configurableFields = getInheritedFields(this.getClass());
 		final Map<String, Object> serializeMap = new HashMap<String, Object>();
 		for (final Field configurableField : configurableFields) {
@@ -93,7 +93,7 @@ public class Configurable implements IAnnotatedConfigurable {
 	 */
 	@Override
 	public void deserializeFromConfiguration(Class<?> serializeType, @NotNull final Object configuration, @Nullable final Logger logger) {
-		final IRegistry<Class<?>, ISerializer<?, ?>> registry = SerializerRegistry.getRegistryFor(serializeType);
+		final SerializerRegistry<?> registry = SerializerRegistryRegistry.getRegistryFor(serializeType);
 		final Map<String, Object> serializeMap = ((Map<?, ?>)invokeMethod(handle(()->ISerializer.class.getMethod("deserialize", Object.class)), registry.get(Map.class), configuration))
 													.entrySet()
 													.stream()

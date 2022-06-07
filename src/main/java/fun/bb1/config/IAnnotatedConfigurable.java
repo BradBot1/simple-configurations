@@ -2,8 +2,8 @@ package fun.bb1.config;
 
 import static fun.bb1.exceptions.handler.ExceptionHandler.handle;
 import static fun.bb1.reflection.FieldUtils.getField;
-import static fun.bb1.reflection.FieldUtils.setField;
 import static fun.bb1.reflection.FieldUtils.getInheritedFieldsWithAnnotation;
+import static fun.bb1.reflection.FieldUtils.setField;
 import static fun.bb1.reflection.MethodUtils.invokeMethod;
 import static java.lang.reflect.Modifier.isFinal;
 import static java.lang.reflect.Modifier.isTransient;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import fun.bb1.config.annotations.Configurable;
 import fun.bb1.config.serializer.ISerializer;
 import fun.bb1.config.serializer.SerializerRegistry;
-import fun.bb1.registry.IRegistry;
+import fun.bb1.config.serializer.SerializerRegistryRegistry;
 
 /**
  * 
@@ -59,7 +59,7 @@ public interface IAnnotatedConfigurable {
 	 */
 	@SuppressWarnings("unchecked")
 	public default <T> @Nullable T serializeForConfiguration(Class<T> serializeType, @Nullable final Logger logger) {
-		final IRegistry<Class<?>, ISerializer<?, ?>> registry = SerializerRegistry.getRegistryFor(serializeType);
+		final SerializerRegistry<T> registry = SerializerRegistryRegistry.getRegistryFor(serializeType);
 		final Field[] configurableFields = getInheritedFieldsWithAnnotation(this.getClass(), Configurable.class);
 		final Map<String, Object> serializeMap = new HashMap<String, Object>();
 		final Set<String> blacklistedKeys = this.getExtraConfigurablesTypes()!=null ? this.getExtraConfigurablesTypes().keySet() : Set.of();
@@ -119,7 +119,7 @@ public interface IAnnotatedConfigurable {
 	public default void deserializeFromConfiguration(Class<?> serializeType, @NotNull final Object configuration, @Nullable final Logger logger) {
 		final Map<String, Class<?>> types = this.getExtraConfigurablesTypes();
 		final Set<String> blacklistedKeys = types!=null ? this.getExtraConfigurablesTypes().keySet() : Set.of();
-		final IRegistry<Class<?>, ISerializer<?, ?>> registry = SerializerRegistry.getRegistryFor(serializeType);
+		final SerializerRegistry<?> registry = SerializerRegistryRegistry.getRegistryFor(serializeType);
 		final Map<String, Object> serializeMap = ((Map<?, ?>)invokeMethod(handle(()->ISerializer.class.getMethod("deserialize", Object.class)), registry.get(Map.class), configuration))
 													.entrySet()
 													.stream()

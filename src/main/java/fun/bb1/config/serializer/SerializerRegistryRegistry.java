@@ -49,8 +49,7 @@ public class SerializerRegistryRegistry {
 	 * @return If the registration occurred
 	 */
 	public static final <T> boolean registerSerializer(@NotNull final ISerializer<T, ?> serializer, boolean force) {
-		@SuppressWarnings("unchecked") // unchecked as to be registered it MUST be the same type
-		final SerializerRegistry<T> registry = (SerializerRegistry<T>) getRegistryFor(serializer.getSerializeType());
+		final SerializerRegistry<T> registry = getRegistryFor(serializer.getSerializeType());
 		if (force) registry.unregister(serializer.getObjectType());
 		if (registry.contains(serializer.getObjectType())) return false; // already one registered
 		registry.register(serializer.getObjectType(), serializer);
@@ -62,9 +61,10 @@ public class SerializerRegistryRegistry {
 	 * @param serializeType The {@link Class} of the type you want to serialize too
 	 * @return The appropriate {@link IRegistry}
 	 */
-	public static final <T> @NotNull SerializerRegistry<?> getRegistryFor(@NotNull final Class<T> serializeType) {
-		if (!MAP.containsKey(serializeType)) return MAP.put(serializeType, new SerializerRegistry<T>());
-		return MAP.get(serializeType);
+	@SuppressWarnings("unchecked") // this is safe as the registry must be the same type as the serializeType
+	public static final <T> @NotNull SerializerRegistry<T> getRegistryFor(@NotNull final Class<T> serializeType) {
+		if (!MAP.containsKey(serializeType)) MAP.put(serializeType, new SerializerRegistry<T>());
+		return (@NotNull SerializerRegistry<T>) MAP.get(serializeType);
 	}
 	/**
 	 * Registers a custom SerializerRegistry for a given serializeType
