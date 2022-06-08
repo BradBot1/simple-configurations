@@ -35,7 +35,7 @@ public final class GsonSerializers {
 		registerSerializer(new GsonSerializer<>(StringBuilder.class, (s)->new JsonPrimitive(s.toString()), (r)->new StringBuilder(r instanceof JsonPrimitive prim ? prim.getAsString() : "")));
 		registerSerializer(new GsonSerializer<>(String.class, (s)->new JsonPrimitive(s), (r)->r instanceof JsonPrimitive prim ? prim.getAsString() : null));
 		registerSerializer(new GsonSerializer<>(Character.class, (s)->new JsonPrimitive(s), (r)->r instanceof JsonPrimitive prim ? prim.getAsCharacter() : null));
-		registerSerializer(new GsonSerializer<>(char.class, (s)->new JsonPrimitive(s), (r)->r instanceof JsonPrimitive prim ? prim.getAsCharacter() : 0));
+		registerSerializer(new GsonSerializer<>(char.class, (s)->new JsonPrimitive(s), (r)->r instanceof JsonPrimitive prim ? prim.getAsCharacter() : 'a'));
 		/* Numbers */
 		final Function<JsonElement, Number> numberDeserialize = (r) -> r instanceof JsonPrimitive prim ? prim.isNumber() ? prim.getAsNumber() : null : null;
 		registerSerializer(new GsonSerializer<>(Number.class, (s)->new JsonPrimitive(s), (r)->numberDeserialize.apply(r)));
