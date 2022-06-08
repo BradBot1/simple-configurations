@@ -8,11 +8,11 @@ import static fun.bb1.reflection.MethodUtils.invokeMethod;
 import static java.lang.reflect.Modifier.isFinal;
 import static java.lang.reflect.Modifier.isTransient;
 
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,15 +53,15 @@ public class Configurable implements IAnnotatedConfigurable {
 	public <T> @Nullable T serializeForConfiguration(Class<T> serializeType, @Nullable final Logger logger) {
 		final SerializerRegistry<T> registry = SerializerRegistryRegistry.getRegistryFor(serializeType);
 		final Field[] configurableFields = getInheritedFields(this.getClass());
-		final Map<String, Object> serializeMap = new HashMap<String, Object>();
+		final Map<String, T> serializeMap = new TreeMap<String, T>(); // for ordering
 		for (final Field configurableField : configurableFields) {
 			final int modifiers = configurableField.getModifiers();
 			if (isFinal(modifiers) || isTransient(modifiers)) continue; // this field cannot be saved
 			final Object configurableFieldValue = getField(configurableField, this);
 			if (configurableFieldValue == null) continue; // no value to store
-			final ISerializer<?, ?> serializer = registry.get(configurableField.getDeclaringClass());
+			final ISerializer<T, ?> serializer = registry.get(configurableField.getType());
 			if (serializer == null) {
-				if (logger != null && this.enableConfigurationLogging()) logger.log(Level.WARNING, "No serializer found for \"" + configurableField.getDeclaringClass().getName() + "\"!");
+				if (logger != null && this.enableConfigurationLogging()) logger.log(Level.WARNING, "No serializer found for \"" + configurableField.getType().getName() + "\"!");
 				continue;
 			}
 			// We don't need to validate this as there can only be fields with the ConfigurableField in the array returned by #getInheritedFieldsWithAnnotation
@@ -81,26 +81,20 @@ public class Configurable implements IAnnotatedConfigurable {
 				if (configurableFieldAnnotation.commentPrefix().isEmpty()) {
 					if (logger != null && this.enableConfigurationLogging()) logger.log(Level.WARNING, "The comment prefix for \"" + nameToSaveUnder + "\" is blank!");
 				} else if (!configurableFieldAnnotation.comment().isEmpty()) {
-					serializeMap.put(configurableFieldAnnotation.commentPrefix() + nameToSaveUnder, configurableFieldAnnotation.comment());
+					serializeMap.put(configurableFieldAnnotation.commentPrefix() + nameToSaveUnder, (T) invokeMethod(handle(()->ISerializer.class.getMethod("serialize", Object.class)), registry.get(String.class), configurableFieldAnnotation.comment()));
 				}
 			}
 			serializeMap.put(nameToSaveUnder, castSerializedConfigurableFieldValue);
 		}
-		return (T) invokeMethod(handle(()->ISerializer.class.getMethod("serialize", Object.class)), registry.get(Map.class), serializeMap);
+		return registry.convertMap(serializeMap);
 	}
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deserializeFromConfiguration(Class<?> serializeType, @NotNull final Object configuration, @Nullable final Logger logger) {
-		final SerializerRegistry<?> registry = SerializerRegistryRegistry.getRegistryFor(serializeType);
-		final Map<String, Object> serializeMap = ((Map<?, ?>)invokeMethod(handle(()->ISerializer.class.getMethod("deserialize", Object.class)), registry.get(Map.class), configuration))
-													.entrySet()
-													.stream()
-													.collect(() -> new HashMap<String, Object>(),
-															(t, u) -> t.put(u.getKey() instanceof String s ? s : u.getKey().toString(), u.getValue()),
-															(t, u) -> t.putAll(u));
-		
+	public <T> void deserializeFromConfiguration(Class<T> serializeType, @NotNull final T configuration, @Nullable final Logger logger) {
+		final SerializerRegistry<T> registry = SerializerRegistryRegistry.getRegistryFor(serializeType);
+		final Map<String, T> serializeMap = registry.convertMap(configuration);
 		final Field[] configurableFields = getInheritedFields(this.getClass());
 		if (configurableFields.length == 0) return; // no fields to set
 		for (final Field configurableField : configurableFields) {
@@ -112,12 +106,12 @@ public class Configurable implements IAnnotatedConfigurable {
 				if (logger != null && this.enableConfigurationLogging()) logger.log(Level.WARNING, "The key \"" + nameToSaveUnder + "\" was not found in the configuration");
 				continue;
 			}
-			final ISerializer<?, ?> serializer = registry.get(configurableField.getDeclaringClass());
+			final ISerializer<T, ?> serializer = registry.get(configurableField.getType());
 			if (serializer == null) {
-				if (logger != null && this.enableConfigurationLogging()) logger.log(Level.WARNING, "No serializer found for \"" + configurableField.getDeclaringClass().getName() + "\"!");
+				if (logger != null && this.enableConfigurationLogging()) logger.log(Level.WARNING, "No serializer found for \"" + configurableField.getType().getName() + "\"!");
 				continue;
 			}
-			final Object deserializedValue = invokeMethod(handle(()->ISerializer.class.getMethod("deserialize", Object.class)), serializer, serializeMap.get(nameToSaveUnder));
+			final Object deserializedValue = serializer.deserialize(serializeMap.get(nameToSaveUnder)); // invokeMethod(handle(()->ISerializer.class.getMethod("deserialize", Object.class)), serializer, serializeMap.get(nameToSaveUnder));
 			if (deserializedValue == null) {
 				if (logger != null && this.enableConfigurationLogging()) logger.log(Level.WARNING, "Failed to deserialize \"" + nameToSaveUnder + "\"!");
 				continue;

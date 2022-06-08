@@ -1,8 +1,13 @@
 package fun.bb1.config.serializer;
 
+import static fun.bb1.exceptions.handler.ExceptionHandler.handle;
+import static fun.bb1.reflection.MethodUtils.invokeMethod;
+
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,4 +82,20 @@ public class SerializerRegistry<T> implements IRegistry<Class<?>, ISerializer<T,
 	 */
 	protected @Nullable ISerializer<T, ?> getArraySerializerFor(@Nullable final ISerializer<T, ?> elementSerializer) { return null; }
 	
+	@SuppressWarnings("unchecked")
+	@Internal
+	public @NotNull T convertMap(@NotNull final Map<String, T> map) {
+		return (T) invokeMethod(handle(()->ISerializer.class.getMethod("serialize", Object.class)), this.get(Map.class), map);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Internal
+	public @NotNull Map<String, T> convertMap(@NotNull final T map) {
+		return ((Map<String, T>)invokeMethod(handle(()->ISerializer.class.getMethod("deserialize", Object.class)), this.get(Map.class), map))
+				.entrySet()
+				.stream()
+				.collect(() -> new HashMap<String, T>(),
+						(t, u) -> t.put(u.getKey(), u.getValue()),
+						(t, u) -> t.putAll(u));
+	}
 }
