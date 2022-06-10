@@ -62,7 +62,7 @@ public class SerializerRegistry<T> implements IRegistry<Class<?>, ISerializer<T,
 	public @Nullable ISerializer<T, ?> get(@NotNull final Class<?> identifier) {
 		ISerializer<T, ?> serializer = this.map.get(identifier);
 		if (serializer != null) return serializer;
-		if (identifier.isArray()) return this.getArraySerializerFor(this.get(identifier.arrayType()));
+		if (identifier.isArray()) return this.getArraySerializerFor(this.get(identifier.getComponentType()));
 		return null;
 	}
 	/**
