@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,7 +62,7 @@ public interface IAnnotatedConfigurable {
 	public default <T> @Nullable T serializeForConfiguration(Class<T> serializeType, @Nullable final Logger logger) {
 		final SerializerRegistry<T> registry = SerializerRegistryRegistry.getRegistryFor(serializeType);
 		final Field[] configurableFields = getInheritedFieldsWithAnnotation(this.getClass(), Configurable.class);
-		final Map<String, T> serializeMap = new TreeMap<String, T>(); // TreeMap for ordering
+		final Map<String, T> serializeMap = new LinkedHashMap<String, T>(); // LinkedHashMap for ordering
 		final Set<String> blacklistedKeys = this.getExtraConfigurablesTypes()!=null ? this.getExtraConfigurablesTypes().keySet() : Set.of();
 		for (final Field configurableField : configurableFields) {
 			final int modifiers = configurableField.getModifiers();

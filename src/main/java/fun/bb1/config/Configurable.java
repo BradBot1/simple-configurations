@@ -9,8 +9,8 @@ import static java.lang.reflect.Modifier.isFinal;
 import static java.lang.reflect.Modifier.isTransient;
 
 import java.lang.reflect.Field;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,7 +53,7 @@ public class Configurable implements IAnnotatedConfigurable {
 	public <T> @Nullable T serializeForConfiguration(Class<T> serializeType, @Nullable final Logger logger) {
 		final SerializerRegistry<T> registry = SerializerRegistryRegistry.getRegistryFor(serializeType);
 		final Field[] configurableFields = getInheritedFields(this.getClass());
-		final Map<String, T> serializeMap = new TreeMap<String, T>(); // for ordering
+		final Map<String, T> serializeMap = new LinkedHashMap<String, T>(); // for ordering
 		for (final Field configurableField : configurableFields) {
 			final int modifiers = configurableField.getModifiers();
 			if (isFinal(modifiers) || isTransient(modifiers)) continue; // this field cannot be saved
