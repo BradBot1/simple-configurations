@@ -3,6 +3,8 @@ package fun.bb1.config.serializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import fun.bb1.objects.Primitive;
+
 /**
  * 
  * Copyright 2022 BradBot_1
@@ -22,32 +24,34 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A simple way to encapsulate serializing/deserializing objects to a targeted format
  * 
- * @param <S> The serialzation type
- * @param <R> The type of {@link Object} that is to be serialized/deserialized
+ * @param <T> The type of {@link Object} that is to be serialized/deserialized
  * 
  * @author BradBot_1
  */
-public interface ISerializer<S, R> {
+public interface ISerializer<T> {
 	/**
-	 * Serializes the provided {@link Object}
+	 * Serializes the provided argument into a form that can be translated
 	 * 
-	 * @param configToBeSerialized The {@link Object} that is to be serialized
+	 * @param object The object to serialize
+	 * 
 	 * @return The serialized form of the object
 	 */
-	public @NotNull S serialize(@NotNull final R configToBeSerialized);
+	public @NotNull Primitive serialize(@NotNull final T object);
 	/**
-	 * Deserializes the provied {@link Object}
+	 * Deserializes the serialized data from a {@link Primitive}
 	 * 
 	 * @param serializedData The data in a serialized form
+	 * 
+	 * @return The object that was represented by the serialized data
 	 */
-	public @Nullable R deserialize(@NotNull final S serializedData);
+	public @Nullable T deserialize(@NotNull final Primitive serializedData);
 	/**
 	 * @return The class that represents how the data will be encapsulated after serialization
 	 */
-	public @NotNull Class<? extends S> getSerializeType();
+	public @NotNull Class<? extends Primitive> getSerializeType();
 	/**
-	 * @return The class that represents how the data is before serialization
+	 * @return The class of the object that is to have its data encapsulated
 	 */
-	public @NotNull Class<? extends R> getObjectType();
+	public @NotNull Class<? extends T> getObjectType();
 	
 }
