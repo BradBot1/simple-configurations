@@ -2,14 +2,14 @@ package fun.bb1.config;
 
 import org.jetbrains.annotations.NotNull;
 
-import fun.bb1.config.translator.ITranslator;
+import fun.bb1.config.serializer.ISerializer;
 import fun.bb1.objects.Primitive;
 
-final class CastingTranslator<T> implements ITranslator<T> {
+final class CastingSerializer<T> implements ISerializer<T> {
 	
-	private final @NotNull ITranslator<Object> innerTranslator;
+	private final @NotNull ISerializer<Object> innerTranslator;
 	
-	CastingTranslator(@NotNull final ITranslator<Object> innerTranslator) {
+	CastingSerializer(@NotNull final ISerializer<Object> innerTranslator) {
 		this.innerTranslator = innerTranslator;
 	}
 	

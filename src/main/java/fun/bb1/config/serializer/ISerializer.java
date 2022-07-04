@@ -1,4 +1,4 @@
-package fun.bb1.config.translator;
+package fun.bb1.config.serializer;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,7 @@ import fun.bb1.objects.Primitive;
  * 
  * @author BradBot_1
  */
-public interface ITranslator<T> {
+public interface ISerializer<T> {
 	
 	public @NotNull T translate(@NotNull final Primitive primitiveForm);
 	
