@@ -1,8 +1,7 @@
-package fun.bb1.config;
+package fun.bb1.config.serializer;
 
 import org.jetbrains.annotations.NotNull;
 
-import fun.bb1.config.serializer.ISerializer;
 import fun.bb1.objects.Primitive;
 
 final class CastingSerializer<T> implements ISerializer<T> {
