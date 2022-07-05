@@ -85,18 +85,18 @@ public final class SerializerController {
 		return new ISerializer<Object>() {
 
 			@Override
-			public @NotNull final Object translate(@NotNull final Primitive primitiveForm) {
+			public @NotNull final Object deserialize(@NotNull final Primitive primitiveForm) {
 				final Primitive[] primArr = primitiveForm.getAsArray();
 				final Object arr = Array.newInstance(type, primArr.length);
 				for (int i = 0; i < primArr.length; i++) {
 					if (primArr[i] == null) continue;
-					Array.set(arr, i, translator.translate(primArr[i]));
+					Array.set(arr, i, translator.deserialize(primArr[i]));
 				}
 				return arr;
 			}
 
 			@Override
-			public @NotNull final Primitive translate(@NotNull final Object primitiveForm) {
+			public @NotNull final Primitive serialize(@NotNull final Object primitiveForm) {
 				final Primitive[] primArr = new Primitive[Array.getLength(primitiveForm)];
 				for (int i = 0; i < primArr.length; i++) {
 					try {

@@ -14,13 +14,13 @@ final class CastingSerializer<T> implements ISerializer<T> {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public @NotNull T translate(@NotNull Primitive primitiveForm) {
-		return (T) this.innerTranslator.translate(primitiveForm);
+	public @NotNull T deserialize(@NotNull Primitive primitiveForm) {
+		return (T) this.innerTranslator.serialize(primitiveForm);
 	}
 
 	@Override
-	public @NotNull Primitive translate(@NotNull T primitiveForm) {
-		return this.innerTranslator.translate((Object) primitiveForm);
+	public @NotNull Primitive serialize(@NotNull T primitiveForm) {
+		return this.innerTranslator.serialize((Object) primitiveForm);
 	}
 	
 	

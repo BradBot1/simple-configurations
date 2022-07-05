@@ -1,6 +1,7 @@
 package fun.bb1.config.serializer;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import fun.bb1.objects.Primitive;
 
@@ -21,16 +22,32 @@ import fun.bb1.objects.Primitive;
  * limitations under the License.
  */
 /**
- * A simple way to encapsulate translating objects to/from a targeted format
+ * A simple way to encapsulate serializing objects to/from a targeted format
  * 
- * @param <R> The type to translate to
+ * @param <T> The type to translate to
  * 
  * @author BradBot_1
  */
 public interface ISerializer<T> {
-	
-	public @NotNull T translate(@NotNull final Primitive primitiveForm);
-	
-	public @NotNull Primitive translate(@NotNull final T primitiveForm);
+	/**
+	 * Deserializes the provided {@link Primitive} into T
+	 * 
+	 * @apiNote Will return null if the provided primitiveForm cannot be deserialized
+	 * 
+	 * @param primitiveForm The serialized version of T
+	 * 
+	 * @return A deserialized object
+	 */
+	public @Nullable T deserialize(@NotNull final Primitive primitiveForm);
+	/**
+	 * Serializes the provided T into {@link Primitive}
+	 * 
+	 * @apiNote Will return null if the provided instanceOfT cannot be serialized
+	 * 
+	 * @param instanceOfT The instance of T to be serialized
+	 * 
+	 * @return A serialized object
+	 */
+	public @Nullable Primitive serialize(@NotNull final T instanceOfT);
 	
 }

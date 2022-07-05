@@ -18,12 +18,12 @@ public final class InlineSerializer<T> implements ISerializer<T>, IInline {
 	}
 	
 	@Override
-	public final @NotNull T translate(@NotNull final Primitive primitiveForm) {
+	public final @NotNull T deserialize(@NotNull final Primitive primitiveForm) {
 		return this.translateTo.apply(primitiveForm);
 	}
 
 	@Override
-	public final @NotNull Primitive translate(@NotNull final T primitiveForm) {
+	public final @NotNull Primitive serialize(@NotNull final T primitiveForm) {
 		return this.translateFrom.apply(primitiveForm);
 	}
 
