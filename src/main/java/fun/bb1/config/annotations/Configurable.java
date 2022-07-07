@@ -50,7 +50,10 @@ public @interface Configurable {
 	 * @apiNote This value should never result in a key used elsewhere, elsewise conflicts may occur
 	 * 
 	 * @return The prefix to apply to {@link #value()} to generate the key name for the comment
+	 * 
+	 * @deprecated This is only here for backwards comparability, it is ignored by the config
 	 */
+	@Deprecated(since = "2.0.0")
 	public String commentPrefix() default "comment-";
 	
 }
