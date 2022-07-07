@@ -10,6 +10,8 @@ import fun.bb1.objects.PrimitiveMap;
 import fun.bb1.registry.IRegistry;
 import fun.bb1.registry.SimpleRegistry;
 
+import static fun.bb1.exceptions.handler.ExceptionHandler.handle;
+
 public final class SerializerController {
 	
 	private static final @NotNull IRegistry<Class<?>, ISerializer<?>> SERIALIZER_REGISTRY = new SimpleRegistry<Class<?>, ISerializer<?>>() {{
@@ -55,6 +57,17 @@ public final class SerializerController {
 	
 	public static final @NotNull IRegistry<Class<?>, ISerializer<?>> getSerializerRegistry() {
 		return SERIALIZER_REGISTRY;
+	}
+	
+	public static final <T> @Nullable Primitive serialize(@NotNull final T type) {
+		@SuppressWarnings("unchecked")
+		final Class<T> clazz = (Class<T>) type.getClass();
+		final ISerializer<T> serializer = getSerializerFor(clazz);
+		return handle(()->serializer.serialize(type));
+	}
+	
+	public static final <T> @Nullable T deserialize(@NotNull final Primitive primitive, @NotNull final Class<T> clazz) {
+		return handle(()->getSerializerFor(clazz).deserialize(primitive));
 	}
 	
 	@SuppressWarnings("unchecked")
