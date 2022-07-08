@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fun.bb1</groupId>
   <artifactId>simple-configs-gson</artifactId>
-  <version>1.0.0</version>
+  <version>2.0.0</version>
   <name>Simple Gson Configs</name>
   <description>An implementation of simple-configs that utilises Gson</description>
   
@@ -68,7 +68,7 @@
 		<dependency>
 			<groupId>fun.bb1</groupId>
 			<artifactId>simple-configs</artifactId>
-			<version>1.0.0</version>
+			<version>2.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
