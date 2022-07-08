@@ -19,9 +19,8 @@ import fun.bb1.config.adapter.AbstractAdapter;
 import fun.bb1.objects.Primitive;
 import fun.bb1.objects.PrimitiveMap;
 import fun.bb1.objects.Tuple;
-import fun.bb1.registry.IRegisterable;
 
-public class GsonAdapter extends AbstractAdapter<JsonElement> implements IRegisterable<Void> {
+public class GsonAdapter extends AbstractAdapter<JsonElement> {
 	
 	private static final @NotNull String COMMENT_PREFIX = "comment-";
 	private final @NotNull Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
