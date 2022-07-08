@@ -114,7 +114,7 @@ public interface IConfigurable {
 				serializeMap.put(entry.getKey(), new Tuple<Primitive, String>(SerializerController.serialize(entry.getValue()), null));
 			}
 		}
-		return adapter.translate(serializeMap);
+		return adapter.translateMap(serializeMap);
 	}
 	/**
 	 * Deserializes the implementor of this interface with the provided serialized object
@@ -131,7 +131,7 @@ public interface IConfigurable {
 		}
 		final @Nullable Map<String, Class<?>> extraConfigurableTypes = this.getExtraConfigurablesTypes();
 		final Set<String> blacklistedKeys = extraConfigurableTypes!=null ? extraConfigurableTypes.keySet() : Set.of();
-		final PrimitiveMap<String> serializeMap = adapter.translate(configuration);
+		final PrimitiveMap<String> serializeMap = adapter.translate(configuration).getAsStringBasedMap();
 		if (extraConfigurableTypes != null) {
 			final Map<String, Object> extras = new HashMap<String, Object>();
 			for (final Entry<String, Class<?>> entry : extraConfigurableTypes.entrySet()) {

@@ -1,5 +1,7 @@
 package fun.bb1.config.adapter;
 
+import static fun.bb1.exceptions.handler.ExceptionHandler.handle;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,12 +13,10 @@ import org.jetbrains.annotations.Nullable;
 
 import fun.bb1.config.IAnnotatedConfigurable;
 import fun.bb1.objects.Primitive;
-import fun.bb1.objects.PrimitiveMap;
 import fun.bb1.objects.Tuple;
+import fun.bb1.registry.IRegisterable;
 
-import static fun.bb1.exceptions.handler.ExceptionHandler.handle;
-
-public abstract class AbstractAdapter<T> {
+public abstract class AbstractAdapter<T> implements IRegisterable<Void> {
 	
 	private final @NotNull Class<T> clazz;
 	
@@ -25,6 +25,8 @@ public abstract class AbstractAdapter<T> {
 	}
 	
 	public abstract @Nullable T translate(@NotNull final Primitive primitive);
+	
+	public abstract @Nullable Primitive translate(@NotNull final T primitive);
 	/**
 	 * Used by {@link IAnnotatedConfigurable} to serialize a map of values alongside its comments
 	 * 
@@ -33,9 +35,7 @@ public abstract class AbstractAdapter<T> {
 	 * @return The serialized version of the map
 	 */
 	@Internal
-	public abstract @Nullable T translate(@NotNull final Map<String, Tuple<Primitive, String>> map);
-	
-	public abstract @Nullable PrimitiveMap<String> translate(@NotNull final T map);
+	public abstract @Nullable T translateMap(@NotNull final Map<String, Tuple<Primitive, String>> map);
 	
 	public abstract @NotNull String convertToString(@NotNull final T primitive);
 	
@@ -82,6 +82,11 @@ public abstract class AbstractAdapter<T> {
 	
 	public final @NotNull Class<T> getAdaptiveClass() {
 		return this.clazz;
+	}
+	
+	@Override
+	public void register(@Nullable Void v) {
+		AdapterController.getAdapterRegistry().register(this.getAdaptiveClass(), this);
 	}
 	
 }
