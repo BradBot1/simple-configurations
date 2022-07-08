@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import fun.bb1.objects.Primitive;
+import fun.bb1.registry.IRegisterable;
 
 /**
  * 
@@ -28,7 +29,7 @@ import fun.bb1.objects.Primitive;
  * 
  * @author BradBot_1
  */
-public interface ISerializer<T> {
+public interface ISerializer<T> extends IRegisterable<Class<? extends T>> {
 	/**
 	 * Deserializes the provided {@link Primitive} into T
 	 * 
@@ -49,5 +50,10 @@ public interface ISerializer<T> {
 	 * @return A serialized object
 	 */
 	public @Nullable Primitive serialize(@NotNull final T instanceOfT);
+	
+	@Override
+	default void register(@NotNull final Class<? extends T> arg0) {
+		SerializerController.getSerializerRegistry().register(arg0, this);
+	}
 	
 }
