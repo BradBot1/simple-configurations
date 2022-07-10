@@ -1,6 +1,7 @@
 package fun.bb1.config.serializer;
 
 import java.lang.reflect.Array;
+import java.util.Collection;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,20 +82,18 @@ public final class SerializerController {
 				count++;
 				rep = rep.componentType();
 			}
-			ISerializer<?> translator2 = getSerializerRegistry().get(type);
-			while (count > 1) {
-				translator2 = buildArrayTranslator(rep, translator2);
-				rep = rep.arrayType();
-				count--;
-				if (translator2 == null) return null;
-			}
+			ISerializer<?> translator2 = getSerializerRegistry().get(rep);
+			if (translator2 == null) return null;
+			for (int i = count; i > 0; i--) {
+	            rep = rep.arrayType();
+	            translator2 = buildArrayTranslator(rep, translator2);
+	        }
 			return new CastingSerializer<T>(buildArrayTranslator(rep, translator2));
 		}
 		return null;
 	}
 	
 	private static final @Nullable ISerializer<Object> buildArrayTranslator(@NotNull final Class<?> type, @NotNull final ISerializer<?> translator) {
-		if (translator == null) return null;
 		return new ISerializer<Object>() {
 
 			@Override
@@ -109,7 +108,14 @@ public final class SerializerController {
 			}
 
 			@Override
-			public @NotNull final Primitive serialize(@NotNull final Object primitiveForm) {
+			public @NotNull final Primitive serialize(@NotNull Object primitiveForm) {
+				if (primitiveForm instanceof Collection<?> col) {
+					primitiveForm = Array.newInstance(type, col.size());
+					int counter = 0;
+					for (final Object o : col) Array.set(primitiveForm, counter++, o);
+				} else if (primitiveForm instanceof Primitive p) {
+					primitiveForm = p.getAsArray();
+				}
 				final Primitive[] primArr = new Primitive[Array.getLength(primitiveForm)];
 				for (int i = 0; i < primArr.length; i++) {
 					try {
