@@ -32,6 +32,8 @@ public final class SerializerController {
 		this.register(byte.class, new InlineSerializer<Byte>((p)->p.getAsNumber().byteValue(), (t)->new Primitive(t)));
 		this.register(Long.class, new InlineSerializer<Long>((p)->p.getAsNumber().longValue(), (t)->new Primitive(t)));
 		this.register(long.class, new InlineSerializer<Long>((p)->p.getAsNumber().longValue(), (t)->new Primitive(t)));
+		this.register(Boolean.class, new InlineSerializer<Boolean>((p)->p.getAsBoolean(), (t)->new Primitive(t)));
+		this.register(boolean.class, new InlineSerializer<Boolean>((p)->p.getAsBoolean(), (t)->new Primitive(t)));
 		this.register(Primitive.class, new InlineSerializer<Primitive>((p)->p, (t)->t));
 		this.register(PrimitiveMap.class, new InlineSerializer<PrimitiveMap<?>>((p)->p.getAsMap(), (t)->new Primitive(t)));
 		this.register(Primitive[].class, new InlineSerializer<Primitive[]>((p)->p.getAsArray(), (t)->new Primitive(t)));
