@@ -37,6 +37,7 @@ public class GsonAdapter extends AbstractAdapter<JsonElement> {
 		if (primitive.isArray()) {
 			final JsonArray jsonArray = new JsonArray();
 			for (final Primitive primitive2 : primitive.getAsArray()) {
+				if (primitive2 == null) continue;
 				jsonArray.add(this.translate(primitive2));
 			}
 			return jsonArray;
