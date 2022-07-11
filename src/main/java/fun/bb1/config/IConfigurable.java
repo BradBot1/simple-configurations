@@ -1,10 +1,8 @@
 package fun.bb1.config;
 
-import static fun.bb1.exceptions.handler.ExceptionHandler.handle;
 import static fun.bb1.reflection.FieldUtils.getField;
 import static fun.bb1.reflection.FieldUtils.getInheritedFields;
 import static fun.bb1.reflection.FieldUtils.setField;
-import static fun.bb1.reflection.MethodUtils.invokeMethod;
 import static java.lang.reflect.Modifier.isFinal;
 import static java.lang.reflect.Modifier.isTransient;
 
@@ -79,7 +77,7 @@ public interface IConfigurable {
 		for (final Field field : matchedFields) {
 			final Object fieldValue = getField(field, this);
 			if (fieldValue == null) continue; // no value to store
-			final ISerializer<?> serializer = SerializerController.getSerializerFor(serializeType);
+			final ISerializer<?> serializer = SerializerController.getSerializerFor(field.getType());
 			if (serializer == null) {
 				if (logger != null && this.enableConfigurationLogging()) logger.log(Level.WARNING, "No serializer found for \"" + field.getType().getName() + "\"!");
 				continue;
@@ -91,9 +89,8 @@ public interface IConfigurable {
 				continue;
 			}
 			if (blacklistedKeys.contains(nameToSaveUnder)) continue; // blacklisted
-			final Object serializedCFieldValue = invokeMethod(handle(()->ISerializer.class.getMethod("serialize", Object.class)), serializer, fieldValue);
-			final Primitive castSerializedFieldValue = handle(()-> (Primitive) serializedCFieldValue);
-			if (castSerializedFieldValue == null) {
+			final Primitive serializedFieldValue = serializer.toObjectSerializer().serialize(fieldValue);
+			if (serializedFieldValue == null) {
 				if (logger != null && this.enableConfigurationLogging()) logger.log(Level.WARNING, "Failed to serialize \"" + nameToSaveUnder + "\"!");
 				continue;
 			}
@@ -101,7 +98,7 @@ public interface IConfigurable {
 			if (!fieldAnnotation.comment().isEmpty()) {
 				comment = SerializerController.getSerializerFor(String.class).serialize(fieldAnnotation.comment()).getAsString();
 			}
-			serializeMap.put(nameToSaveUnder, new Tuple<Primitive, String>(castSerializedFieldValue, comment));
+			serializeMap.put(nameToSaveUnder, new Tuple<Primitive, String>(serializedFieldValue, comment));
 		}
 		final Map<String, Object> extras = this.getExtraConfigurables();
 		if (extras != null) {

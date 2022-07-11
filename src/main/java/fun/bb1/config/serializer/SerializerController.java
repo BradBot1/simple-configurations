@@ -96,6 +96,7 @@ public final class SerializerController {
 	}
 	
 	private static final @Nullable ISerializer<Object> buildArrayTranslator(@NotNull final Class<?> type, @NotNull final ISerializer<?> translator) {
+		final ISerializer<Object> serializer = translator.toObjectSerializer();
 		return new ISerializer<Object>() {
 
 			@Override
@@ -104,7 +105,7 @@ public final class SerializerController {
 				final Object arr = Array.newInstance(type, primArr.length);
 				for (int i = 0; i < primArr.length; i++) {
 					if (primArr[i] == null) continue;
-					Array.set(arr, i, translator.deserialize(primArr[i]));
+					Array.set(arr, i, serializer.deserialize(primArr[i]));
 				}
 				return arr;
 			}
@@ -121,7 +122,7 @@ public final class SerializerController {
 				final Primitive[] primArr = new Primitive[Array.getLength(primitiveForm)];
 				for (int i = 0; i < primArr.length; i++) {
 					try {
-						primArr[i] = (Primitive) ISerializer.class.getMethod("translate", Primitive.class).invoke(translator, Array.get(primitiveForm, i));
+						primArr[i] = serializer.serialize(Array.get(primitiveForm, i));
 					} catch (Throwable e) { }
 				}
 				return new Primitive(primArr);
