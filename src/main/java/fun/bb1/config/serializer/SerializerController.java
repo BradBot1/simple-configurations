@@ -1,7 +1,8 @@
 package fun.bb1.config.serializer;
 
+import static fun.bb1.exceptions.handler.ExceptionHandler.handle;
+
 import java.lang.reflect.Array;
-import java.util.Collection;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,8 +11,6 @@ import fun.bb1.objects.Primitive;
 import fun.bb1.objects.PrimitiveMap;
 import fun.bb1.registry.IRegistry;
 import fun.bb1.registry.SimpleRegistry;
-
-import static fun.bb1.exceptions.handler.ExceptionHandler.handle;
 
 public final class SerializerController {
 	
@@ -84,13 +83,13 @@ public final class SerializerController {
 				count++;
 				rep = rep.componentType();
 			}
-			ISerializer<?> translator2 = getSerializerRegistry().get(rep);
+			ISerializer<Object> translator2 = getSerializerRegistry().get(rep).toObjectSerializer();
 			if (translator2 == null) return null;
 			for (int i = count; i > 0; i--) {
 	            rep = rep.arrayType();
 	            translator2 = buildArrayTranslator(rep, translator2);
 	        }
-			return new CastingSerializer<T>(buildArrayTranslator(rep, translator2));
+			return new CastingSerializer<T>(translator2);
 		}
 		return null;
 	}
@@ -105,20 +104,15 @@ public final class SerializerController {
 				final Object arr = Array.newInstance(type, primArr.length);
 				for (int i = 0; i < primArr.length; i++) {
 					if (primArr[i] == null) continue;
-					Array.set(arr, i, serializer.deserialize(primArr[i]));
+					final Object val = serializer.deserialize(primArr[i]);
+					Array.set(arr, i, handle(()->type.cast(val))); // cast for primitives
 				}
 				return arr;
 			}
 
 			@Override
 			public @NotNull final Primitive serialize(@NotNull Object primitiveForm) {
-				if (primitiveForm instanceof Collection<?> col) {
-					primitiveForm = Array.newInstance(type, col.size());
-					int counter = 0;
-					for (final Object o : col) Array.set(primitiveForm, counter++, o);
-				} else if (primitiveForm instanceof Primitive p) {
-					primitiveForm = p.getAsArray();
-				}
+				if (primitiveForm instanceof Primitive p) primitiveForm = p.getAsArray();
 				final Primitive[] primArr = new Primitive[Array.getLength(primitiveForm)];
 				for (int i = 0; i < primArr.length; i++) {
 					try {
