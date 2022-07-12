@@ -15,7 +15,7 @@ final class CastingSerializer<T> implements ISerializer<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public @NotNull T deserialize(@NotNull Primitive primitiveForm) {
-		return (T) this.innerTranslator.serialize(primitiveForm);
+		return (T) this.innerTranslator.deserialize(primitiveForm);
 	}
 
 	@Override
