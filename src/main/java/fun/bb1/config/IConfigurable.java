@@ -95,7 +95,7 @@ public interface IConfigurable {
 				continue;
 			}
 			String comment = null;
-			if (!fieldAnnotation.comment().isEmpty()) {
+			if (fieldAnnotation!=null && !fieldAnnotation.comment().isEmpty()) {
 				comment = SerializerController.getSerializerFor(String.class).serialize(fieldAnnotation.comment()).getAsString();
 			}
 			serializeMap.put(nameToSaveUnder, new Tuple<Primitive, String>(serializedFieldValue, comment));
