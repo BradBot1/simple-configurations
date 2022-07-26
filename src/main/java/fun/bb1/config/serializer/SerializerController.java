@@ -91,6 +91,26 @@ public final class SerializerController {
 	        }
 			return new CastingSerializer<T>(translator2);
 		}
+		if (type.isEnum()) {
+			return new ISerializer<T>() {
+
+				@Override
+				public @Nullable T deserialize(@NotNull Primitive primitiveForm) {
+					if (primitiveForm.isNumber()) return type.getEnumConstants()[primitiveForm.getAsNumber().intValue()];
+					final String en = primitiveForm.getAsString();
+					for (final T t : type.getEnumConstants()) 
+						if (((Enum<?>)t).name().equalsIgnoreCase(en))
+							return t;
+					return null;
+				}
+
+				@Override
+				public @Nullable Primitive serialize(@NotNull T instanceOfT) {
+					return new Primitive(((Enum<?>)instanceOfT).name());
+				}
+				
+			};
+		}
 		return null;
 	}
 	
