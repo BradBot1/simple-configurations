@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fun.bb1</groupId>
   <artifactId>simple-configs-yaml</artifactId>
-  <version>2.0.0</version>
+  <version>2.0.1</version>
   <name>Simple Yaml Configs</name>
   <description>An implementation of simple-configs that utilises Yaml</description>
   
@@ -80,7 +80,7 @@
 		<dependency>
 			<groupId>fun.bb1</groupId>
 			<artifactId>objectiveyaml</artifactId>
-			<version>1.0.0</version>
+			<version>1.1.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>fun.bb1</groupId>
