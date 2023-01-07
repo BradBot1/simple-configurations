@@ -1,4 +1,4 @@
-package fun.bb1.config.serializer;
+package fun.bb1.config.v2.serializer;
 
 import java.util.function.Function;
 

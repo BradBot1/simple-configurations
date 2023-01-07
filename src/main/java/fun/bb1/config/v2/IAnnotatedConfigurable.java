@@ -1,11 +1,11 @@
-package fun.bb1.config;
+package fun.bb1.config.v2;
 
 import java.util.logging.Logger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import fun.bb1.config.annotations.Configurable;
+import fun.bb1.config.v2.annotations.Configurable;
 
 /**
  * 

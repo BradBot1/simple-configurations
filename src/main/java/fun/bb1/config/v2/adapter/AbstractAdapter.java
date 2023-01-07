@@ -1,4 +1,4 @@
-package fun.bb1.config.adapter;
+package fun.bb1.config.v2.adapter;
 
 import static fun.bb1.exceptions.handler.ExceptionHandler.handle;
 
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import fun.bb1.config.IAnnotatedConfigurable;
+import fun.bb1.config.v2.IAnnotatedConfigurable;
 import fun.bb1.objects.Primitive;
 import fun.bb1.objects.Tuple;
 import fun.bb1.registry.IRegisterable;

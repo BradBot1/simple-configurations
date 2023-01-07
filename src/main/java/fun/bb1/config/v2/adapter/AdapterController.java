@@ -1,4 +1,4 @@
-package fun.bb1.config.adapter;
+package fun.bb1.config.v2.adapter;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

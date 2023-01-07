@@ -1,4 +1,4 @@
-package fun.bb1.config;
+package fun.bb1.config.v2;
 
 import static fun.bb1.reflection.FieldUtils.getField;
 import static fun.bb1.reflection.FieldUtils.getInheritedFields;
@@ -18,11 +18,11 @@ import java.util.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import fun.bb1.config.adapter.AbstractAdapter;
-import fun.bb1.config.adapter.AdapterController;
-import fun.bb1.config.annotations.Configurable;
-import fun.bb1.config.serializer.ISerializer;
-import fun.bb1.config.serializer.SerializerController;
+import fun.bb1.config.v2.adapter.AbstractAdapter;
+import fun.bb1.config.v2.adapter.AdapterController;
+import fun.bb1.config.v2.annotations.Configurable;
+import fun.bb1.config.v2.serializer.ISerializer;
+import fun.bb1.config.v2.serializer.SerializerController;
 import fun.bb1.objects.Primitive;
 import fun.bb1.objects.PrimitiveMap;
 import fun.bb1.objects.Tuple;

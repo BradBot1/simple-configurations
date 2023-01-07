@@ -1,4 +1,4 @@
-package fun.bb1.config.annotations;
+package fun.bb1.config.v2.annotations;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -6,7 +6,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import fun.bb1.config.IAnnotatedConfigurable;
+import fun.bb1.config.v2.IAnnotatedConfigurable;
 
 /**
  * 
